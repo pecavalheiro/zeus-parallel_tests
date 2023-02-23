@@ -104,8 +104,9 @@ module Zeus
         begin
           ActiveRecord::Base.clear_all_connections!
 
-          config = ActiveRecord::Base.connection_db_config
-          config._database= "#{config.database}#{test_env_number}"
+          db_config = ActiveRecord::Base.connection_db_config.configuration_hash
+          config = db_config.deep_dup
+          config[:database] = "#{db_config[:database]}#{test_env_number}"
 
           ActiveRecord::Base.establish_connection(config)
           if ActiveRecord::Base.respond_to?(:shared_connection)
